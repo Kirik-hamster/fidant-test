@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" 
+}
+
+model users {
+  id         Int      @id @default(autoincrement())
+  email      String   @unique
+  name       String?
+  plan_tier  String   @default("starter") @db.VarChar(16)
+  created_at DateTime @default(now())
+}
+
+model daily_usage_events {
+  id           Int       @id @default(autoincrement())
+  user_id      Int
+  date_key     String    @db.VarChar(10) // "YYYY-MM-DD"
+  request_id   String    @db.VarChar(64)
+  status       String    @db.VarChar(16) // "reserved" | "committed"
+  reserved_at  DateTime  @default(now())
+  committed_at DateTime?
+  created_at   DateTime  @default(now())
+
+  @@index([user_id, date_key]) // Индекс для ускорения поиска событий за день
+}
+
+// Твоя реализация Части 3 задания:
+model daily_usage_cache {
+  user_id         Int
+  date_key        String   @db.VarChar(10)
+  committed_count Int      @default(0)
+  reserved_count  Int      @default(0)
+  updated_at      DateTime @updatedAt
+
+  @@id([user_id, date_key]) // Уникальный ключ по юзеру и дате
+}
