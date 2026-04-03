@@ -1,8 +1,11 @@
+import 'dotenv/config';
 import express, { Request, Response } from 'express';
+import cors from 'cors';
 import { UsageService } from '../src/service/usage.service';
 
 const app = express();
-const PORT = 3000;
+app.use(cors());
+const PORT = process.env.PORT || 3000;
 
 app.get('/api/usage/stats', async (req: Request, res: Response) => {
   try {
